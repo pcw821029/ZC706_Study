@@ -4,3 +4,5 @@
 Contents.
 01. axi_gpio 
 		- Axi_gpio Use the AXI interface between pl and ps to control the GPIO in Linux.
+02. bram
+		- Using linux's mmap to access PL's bram.
