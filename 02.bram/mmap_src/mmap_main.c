@@ -33,14 +33,14 @@ int main()
 		printf("Can't map the memory to user space.\n");
 		exit(0);
 	}
-	printf("Memory mapped at address %p.\n", bram0_base);
+	printf("Write Memory mapped at address %p.\n", bram0_base);
 														      
 	bram1_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, memfd, bram1_dev_base & ~MAP_MASK);
 	if (bram1_base == (void *) -1) {
 		printf("Can't map the memory to user space.\n");
 		exit(0);
 	}
-	printf("Memory mapped at address %p.\n", bram0_base);
+	printf("Read Memory mapped at address %p.\n", bram1_base);
 	mmaped0_dev_base = bram0_base + (bram0_dev_base & MAP_MASK);
 	mmaped1_dev_base = bram1_base + (bram1_dev_base & MAP_MASK);
 	*((volatile unsigned long *) (mmaped0_dev_base + GPIO_DIRECTION_OFFSET)) = 0;
@@ -48,11 +48,12 @@ int main()
 																							  
 	for(i=0; i<10; i++) {
 		*((volatile unsigned long *) (mmaped0_dev_base + (GPIO_DATA_OFFSET+(4*i)))) = 0x11223344+i;
+		printf("Write %lx -> %lx\n",(volatile unsigned long *) (mmaped1_dev_base + (GPIO_DATA_OFFSET+(4*i))),0x11223344+i);
 	}
 
 	sleep(10);
 	for(i=0; i<10; i++) {
-		printf("%lx -> %lx\n",(volatile unsigned long *) (mmaped1_dev_base + (GPIO_DATA_OFFSET+(4*i))),*((volatile unsigned long *) (mmaped1_dev_base + (GPIO_DATA_OFFSET+(4*i)))));
+		printf("Read %lx -> %lx\n",(volatile unsigned long *) (mmaped1_dev_base + (GPIO_DATA_OFFSET+(4*i))),*((volatile unsigned long *) (mmaped1_dev_base + (GPIO_DATA_OFFSET+(4*i)))));
 	}
 																								     
 
